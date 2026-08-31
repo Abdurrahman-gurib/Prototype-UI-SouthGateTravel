@@ -8,10 +8,24 @@ IATA-accredited travel agency in the south of Mauritius — Umrah & Hajj, Rodrig
 
 ```bash
 npm install
-npm run dev      # http://localhost:5173
-npm run build    # production build in dist/
-npm run preview  # serve the production build
+cp .env.example .env   # then fill in ANTHROPIC_API_KEY and OPENAI_API_KEY
+npm run server         # AI backend on http://localhost:8787
+npm run dev            # site on http://localhost:5173 (proxies /api to the backend)
+npm run build          # production build in dist/
+npm start              # production: serves dist/ + the AI API on one port
 ```
+
+## AI sales & reservation desk (back office → AI assistant)
+
+A live Claude-powered (claude-opus-5) sales officer for staff, grounded in the real package catalogue:
+
+- **English + French only** — answers in the client's language, politely declines others
+- **Quotations** — generates branded quotation documents (print / download) with correct totals, deposit and instalment maths
+- **Photos** — generates destination visuals via OpenAI images (gpt-image-1, dall-e-3 fallback)
+- **Learning** — staff corrections are saved server-side and injected into future conversations
+- Knows cruises, hotels, Umrah rules (never confirms Hajj places — always escalates), seat holds, payment plans
+
+Keys live in `.env` (server-side only, gitignored) — the browser never sees them. On Render, set `ANTHROPIC_API_KEY` and `OPENAI_API_KEY` as environment variables in the dashboard; `render.yaml` deploys the Node server that serves both the site and the API.
 
 ## What's inside
 

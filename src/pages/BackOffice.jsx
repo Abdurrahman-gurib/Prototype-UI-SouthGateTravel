@@ -1,20 +1,41 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as O from '../data/officeData.js';
+import * as A from '../data/officeAnalytics.js';
+import { SERIES } from '../components/charts/theme.js';
+import { Sparkline, RangeRow } from '../components/charts/core.jsx';
+import { RevenueTrend, CollectionsChart, BranchCompare, AIWeekly } from '../components/charts/TrendCharts.jsx';
+import { ChannelStacked, DestDonut, SegmentsStacked, PaceCurves, EnquiryHeatmap, FunnelChart } from '../components/charts/MixCharts.jsx';
+import AiDesk from '../components/office/AiDesk.jsx';
 import './BackOffice.css';
 
 const mono = "'IBM Plex Mono',monospace";
 const sora = "'Sora',sans-serif";
 const card = { background: '#fff', border: '1px solid rgba(11,36,52,.08)', borderRadius: 16 };
 
+// Local nav extension: Analytics slots in right after the dashboard entry (officeData.js untouched).
+const NAV = [O.O_NAV[0], ['an', 'AN', 'Analytics'], ...O.O_NAV.slice(1)];
+const TITLES = { ...O.O_TITLES, an: ['Analytics', 'Season May 2025 to May 2026, both branches'] };
+
+// Analytics range presets: window scopes every time-series chart in the section.
+const RANGE_OPTIONS = [['6m', 'Last 6 months'], ['12m', 'Last 12 months'], ['24m', '24 months']];
+const RANGE_N = { '6m': 6, '12m': 12, '24m': 24 };
+
+// KPI tile sparklines (first three tiles only, all on the primary series slot).
+const KPI_SPARKS = [A.SPARK.bookings, A.SPARK.revenue, A.SPARK.outstanding];
+
 export default function BackOffice() {
   const navigate = useNavigate();
   const [sec, setSec] = useState('dash');
+  const [range, setRange] = useState('12m');
   const [selRow, setSelRow] = useState(0);
   const [autos, setAutos] = useState([true, true, false, true, true]);
   const [aiExtra, setAiExtra] = useState([]);
 
   const sel = O.O_BOOKINGS[Math.min(selRow, O.O_BOOKINGS.length - 1)];
+
+  // Range window for the Analytics time-series group (slice(-n) keeps latest months).
+  const win = (arr) => arr.slice(-RANGE_N[range]);
 
   const chatRows = O.O_CHAT.concat(
     aiExtra.map((x) => ({ name: 'Sent by you, just now', txt: x, me: true }))
@@ -50,7 +71,7 @@ export default function BackOffice() {
           </div>
         </div>
         <div className="sgp-office-nav">
-          {O.O_NAV.map((n) => {
+          {NAV.map((n) => {
             const active = sec === n[0];
             return (
               <button key={n[0]} onClick={() => setSec(n[0])} className={'sgp-office-navbtn' + (active ? ' is-active' : '')}>
@@ -77,8 +98,8 @@ export default function BackOffice() {
       <div className="sgp-office-main">
         <div className="sgp-office-head">
           <div>
-            <div className="sgp-office-title">{O.O_TITLES[sec][0]}</div>
-            <div style={{ fontSize: 12.5, color: '#8CA0AC', marginTop: 2 }}>{O.O_TITLES[sec][1]}</div>
+            <div className="sgp-office-title">{TITLES[sec][0]}</div>
+            <div style={{ fontSize: 12.5, color: '#8CA0AC', marginTop: 2 }}>{TITLES[sec][1]}</div>
           </div>
           <div style={{ flex: 1 }} />
           <div className="sgp-office-search">
@@ -96,30 +117,19 @@ export default function BackOffice() {
           {sec === 'dash' && (
             <>
               <div className="sgp-office-kpi">
-                {O.O_KPI.map((k) => (
-                  <div key={k.k} style={{ ...card, padding: 20 }}>
+                {O.O_KPI.map((k, i) => (
+                  <div key={k.k} style={{ ...card, padding: 20, minWidth: 0 }}>
                     <div style={{ fontFamily: mono, fontSize: 9.5, letterSpacing: '.11em', textTransform: 'uppercase', color: '#8CA0AC', marginBottom: 12 }}>{k.k}</div>
-                    <div style={{ fontFamily: sora, fontSize: 30, fontWeight: 800, letterSpacing: '-.03em', lineHeight: 1 }}>{k.v}</div>
+                    <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap', minWidth: 0 }}>
+                      <div style={{ fontFamily: sora, fontSize: 30, fontWeight: 800, letterSpacing: '-.03em', lineHeight: 1 }}>{k.v}</div>
+                      {i < KPI_SPARKS.length && <Sparkline data={KPI_SPARKS[i]} accent={SERIES[0]} />}
+                    </div>
                     <div style={{ fontSize: 12, fontWeight: 600, color: k.dc, marginTop: 8 }}>{k.d}</div>
                   </div>
                 ))}
               </div>
               <div className="sgp-office-dashgrid">
-                <div style={{ ...card, padding: '22px 24px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 22 }}>
-                    <div style={{ fontSize: 14, fontWeight: 700 }}>Revenue booked, last 12 months</div>
-                    <div style={{ flex: 1 }} />
-                    <div style={{ fontFamily: mono, fontSize: 11, color: '#8CA0AC' }}>Rs 000s</div>
-                  </div>
-                  <div className="sgp-office-bars">
-                    {O.O_BAR_HEIGHTS.map((h, i) => (
-                      <div key={O.MONTH_LETTERS[i] + i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 9, height: '100%', justifyContent: 'flex-end' }}>
-                        <div style={{ width: '100%', borderRadius: '6px 6px 0 0', background: i === 11 ? '#E1262D' : 'rgba(11,36,52,.14)', height: h + '%' }} />
-                        <div style={{ fontFamily: mono, fontSize: 10, color: '#8CA0AC' }}>{O.MONTH_LETTERS[i]}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                <RevenueTrend data={A.REV_24M.slice(-12)} title="Revenue booked, last 12 months" subtitle="Rs 000s per month, actual against forecast" />
                 <div style={{ ...card, padding: '22px 24px' }}>
                   <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 18 }}>Today at both branches</div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
@@ -132,6 +142,28 @@ export default function BackOffice() {
                     ))}
                   </div>
                 </div>
+              </div>
+            </>
+          )}
+
+          {/* ---- Analytics ---- */}
+          {sec === 'an' && (
+            <>
+              <div style={{ marginBottom: 16 }}>
+                <RangeRow value={range} onChange={setRange} options={RANGE_OPTIONS} />
+              </div>
+              <div className="sgp-office-angrid">
+                <RevenueTrend data={win(A.REV_24M)} title="Revenue booked" subtitle="Rs 000s per month, actual against forecast" />
+                <ChannelStacked data={win(A.CHANNEL_12M)} keys={A.CHANNEL_KEYS} />
+                <BranchCompare data={win(A.BRANCH_12M)} />
+                <CollectionsChart data={win(A.COLLECT_12M)} />
+              </div>
+              <div style={{ fontFamily: mono, fontSize: 10, letterSpacing: '.12em', textTransform: 'uppercase', color: '#8CA0AC', margin: '24px 2px 12px' }}>Season to date</div>
+              <div className="sgp-office-angrid">
+                <DestDonut data={A.DEST_SHARE} />
+                <FunnelChart data={A.FUNNEL_STAGES} />
+                <div className="sgp-office-anfull"><EnquiryHeatmap data={A.ENQUIRY_HEAT} days={A.HEAT_DAYS} hours={A.HEAT_HOURS} /></div>
+                <div className="sgp-office-anfull"><PaceCurves data={A.PACE} keys={A.PACE_KEYS} /></div>
               </div>
             </>
           )}
@@ -203,6 +235,9 @@ export default function BackOffice() {
                   </div>
                 </div>
               </div>
+              <div style={{ marginBottom: 14 }}>
+                <PaceCurves data={A.PACE} keys={A.PACE_KEYS} />
+              </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,240px),1fr))', gap: 14 }}>
                 <div style={{ ...card, padding: '20px 22px' }}>
                   <div style={{ fontFamily: mono, fontSize: 9.5, letterSpacing: '.11em', textTransform: 'uppercase', color: '#8CA0AC', marginBottom: 11 }}>Seats loaded</div>
@@ -226,6 +261,10 @@ export default function BackOffice() {
 
           {/* ---- Clients ---- */}
           {sec === 'cli' && (
+            <>
+            <div style={{ marginBottom: 14 }}>
+              <SegmentsStacked data={A.SEGMENTS_Q} keys={A.SEGMENT_KEYS} />
+            </div>
             <div className="sgp-office-cligrid">
               {O.O_CLIENTS.map((c) => (
                 <div key={c.n} className="sgp-office-clicard">
@@ -241,10 +280,15 @@ export default function BackOffice() {
                 </div>
               ))}
             </div>
+            </>
           )}
 
           {/* ---- Payments ---- */}
           {sec === 'pay' && (
+            <>
+            <div style={{ marginBottom: 14 }}>
+              <CollectionsChart data={A.COLLECT_12M} />
+            </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,520px),1fr))', gap: 14 }}>
               <div style={{ ...card, overflow: 'hidden' }}>
                 <div style={{ padding: '18px 22px', borderBottom: '1px solid rgba(11,36,52,.08)', fontSize: 14, fontWeight: 700 }}>Instalments due</div>
@@ -280,10 +324,15 @@ export default function BackOffice() {
                 <div style={{ marginTop: 22, paddingTop: 18, borderTop: '1px solid rgba(11,36,52,.08)', fontSize: 12.5, lineHeight: 1.6, color: '#3C5464' }}>Card payments went live in March. Cash at the branch is still the second largest channel.</div>
               </div>
             </div>
+            </>
           )}
 
           {/* ---- AI assistant ---- */}
           {sec === 'ai' && (
+            <>
+            <div style={{ marginBottom: 14 }}>
+              <AiDesk />
+            </div>
             <div className="sgp-office-aigrid">
               <div style={{ ...card, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
                 <div style={{ padding: '16px 22px', borderBottom: '1px solid rgba(11,36,52,.08)', display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -333,6 +382,10 @@ export default function BackOffice() {
                 </div>
               </div>
             </div>
+            <div style={{ marginTop: 14 }}>
+              <AIWeekly data={A.AI_12W} />
+            </div>
+            </>
           )}
 
           {/* ---- Automations ---- */}
@@ -364,28 +417,7 @@ export default function BackOffice() {
           {sec === 'rep' && (
             <>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,420px),1fr))', gap: 14, marginBottom: 14 }}>
-                <div style={{ ...card, padding: '22px 24px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
-                    <div style={{ fontSize: 14, fontWeight: 700 }}>Sales, actual against forecast</div>
-                    <div style={{ flex: 1 }} />
-                    <div style={{ display: 'flex', gap: 12, fontFamily: mono, fontSize: 10, color: '#8CA0AC' }}>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}><span style={{ width: 9, height: 9, borderRadius: 3, background: '#0B2434' }} />Actual</span>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}><span style={{ width: 9, height: 9, borderRadius: 3, background: 'rgba(23,165,218,.32)' }} />Forecast</span>
-                    </div>
-                  </div>
-                  <div className="sgp-office-fbars">
-                    {O.O_FORECAST.map((f) => (
-                      <div key={f.m} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, height: '100%', justifyContent: 'flex-end', minWidth: 0 }}>
-                        <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
-                          <div style={{ position: 'absolute', bottom: 0, width: '100%', borderRadius: '6px 6px 0 0', background: 'rgba(23,165,218,.24)', borderTop: '2px dashed rgba(23,165,218,.7)', height: f.fH }} />
-                          <div style={{ position: 'relative', width: '62%', borderRadius: '5px 5px 0 0', background: '#0B2434', height: f.aH }} />
-                        </div>
-                        <div style={{ fontFamily: mono, fontSize: 10, color: '#8CA0AC' }}>{f.m}</div>
-                      </div>
-                    ))}
-                  </div>
-                  <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid rgba(11,36,52,.08)', fontSize: 12.5, color: '#3C5464', lineHeight: 1.55 }}>December is forecast at Rs 118K above a Rs 94K actual last year. Load Rodrigues and Umrah inventory by September.</div>
-                </div>
+                <RevenueTrend data={A.REV_24M.slice(-8)} title="Sales, actual against forecast" subtitle="Rs 000s per month, last 8 months" />
                 <div style={{ ...card, padding: '22px 24px' }}>
                   <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 6 }}>Peak season heat map</div>
                   <div style={{ fontSize: 12, color: '#8CA0AC', marginBottom: 20 }}>Share of annual bookings by month</div>

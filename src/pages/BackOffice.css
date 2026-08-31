@@ -111,14 +111,8 @@
 }
 .sgp-office-dashgrid {
   display: grid;
-  grid-template-columns: 1.6fr 1fr;
+  grid-template-columns: minmax(0,1.6fr) minmax(0,1fr);
   gap: 14px;
-}
-.sgp-office-bars {
-  display: flex;
-  align-items: flex-end;
-  gap: 10px;
-  height: 170px;
 }
 
 /* ---- Tables ---- */
@@ -201,12 +195,6 @@
 }
 
 /* ---- Reports ---- */
-.sgp-office-fbars {
-  display: flex;
-  align-items: flex-end;
-  gap: 12px;
-  height: 180px;
-}
 .sgp-office-peakrow {
   display: grid;
   grid-template-columns: 88px minmax(0, 1fr);
@@ -255,8 +243,6 @@
 
 @media (max-width: 768px) {
   .sgp-office-autogrid { grid-template-columns: 1fr; }
-  .sgp-office-bars { gap: 6px; }
-  .sgp-office-fbars { gap: 8px; }
   .sgp-office-head { padding: 14px 16px; gap: 12px; }
   .sgp-office-body { padding: 18px 14px 40px; }
 }
@@ -265,7 +251,18 @@
   .sgp-office-kpi { grid-template-columns: 1fr; }
   .sgp-office-cligrid { grid-template-columns: 1fr; }
   .sgp-office-search { min-width: 0; flex: 1; }
-  .sgp-office-bars { gap: 4px; }
-  .sgp-office-fbars { gap: 5px; }
   .sgp-office-peakrow { grid-template-columns: 64px minmax(0, 1fr); }
+}
+
+/* ---- Analytics ---- */
+.sgp-office-angrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.sgp-office-angrid > * { min-width: 0; }
+.sgp-office-anfull { grid-column: 1 / -1; }
+
+@media (max-width: 1100px) {
+  .sgp-office-angrid { grid-template-columns: minmax(0, 1fr); }
 }
