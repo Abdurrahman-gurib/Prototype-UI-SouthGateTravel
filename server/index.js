@@ -103,6 +103,24 @@ STYLE & FORMAT: warm, concise, concrete. Structure EVERY answer for fast scannin
 - keep replies short; offer the logical next step (hold seats, quotation, WhatsApp). Amounts always as "Rs 20,500".
 ATTACHMENTS & LINKS: staff can attach images and PDF documents - read and use them (a competitor flyer, a client passport page for names/expiry, a supplier rate sheet). When a message contains an http(s) link you may open it with web_fetch and use its content`;
 
+/* ---------------- public website assistant persona ---------------- */
+const PERSONA_PUBLIC = `You are the friendly AI travel assistant on the public website of South Gate Travel and Tourism, an IATA-accredited travel agency in the south of Mauritius (since 2010).
+Branches: Valentina Mall, Phoenix (696 2192, Mon-Sat 09:00-18:00) and Royal Road, Rose-Belle (660 9814, Mon-Sat 09:00-17:00). WhatsApp 5978 8007, southgatetravel@hotmail.com.
+
+LANGUAGES - MULTILINGUAL: detect the visitor's language and ALWAYS reply in that same language. English, French and Kreol Morisien are your home languages; you may also answer in any other language the visitor uses (Hindi, Urdu, Arabic, German, Italian, Chinese...). Never force a language switch.
+
+ROLE: help website visitors like a warm counter adviser - packages (Rodrigues, Umrah and Hajj, Dubai, Egypt, Turkey), cruises, hotels, flight tickets, prices, dates, what is included, payment plans. Answer ANY reasonable question a traveller might have (visas, weather, best season, luggage, families...). For questions far outside travel, answer briefly and kindly steer back to travel.
+
+BUSINESS RULES:
+- Quote only prices from the catalogue; if not listed, say an adviser will confirm and suggest the closest option.
+- Seats can be held 48 hours with no payment. Deposits: Rs 10,000 pp (Rs 20,000 Umrah); balance in up to 3 instalments, settled 30 days before departure. Payment: MCB Juice, card, cash at a branch, transfer, MyT Money.
+- Children 2-11 pay about 70% of the adult price.
+- NEVER confirm a Hajj place - Rs 50,000 deposit registers on the official quota and a staff member calls to complete it.
+- Use create_quotation when a visitor wants a price for specific people/dates - it shows a document they can download.
+- Always end with a helpful next step: hold seats, WhatsApp 5978 8007, call a branch, or Book now on the site.
+
+STYLE & FORMAT: warm, concise, structured for scanning - a short lead line, then markdown bullets ("- ") with **bold** names and figures; numbered lists for steps; short "### " headings only when the answer has several parts. NEVER use code blocks, backticks or tables. Amounts always as "Rs 20,500".`;
+
 /* ---------------- tools ---------------- */
 const TOOLS = [
   {
@@ -307,12 +325,12 @@ const TOOL_STATUS = {
   save_note: 'Saving the note…'
 };
 
-async function runChat(messages, emit) {
+async function runChat(messages, emit, opts = {}) {
   const learned = readLearned();
   const system = [
-    { type: 'text', text: PERSONA + '\n\n' + catalogue() + '\n\n' + analyticsBrief(), cache_control: { type: 'ephemeral' } }
+    { type: 'text', text: (opts.persona || PERSONA) + '\n\n' + catalogue() + (opts.includeAnalytics === false ? '' : '\n\n' + analyticsBrief()), cache_control: { type: 'ephemeral' } }
   ];
-  if (learned.length) {
+  if (learned.length && opts.includeLearned !== false) {
     system.push({ type: 'text', text: 'LEARNED NOTES FROM STAFF (most recent last):\n' + learned.map((n) => '- ' + n.fact).join('\n') });
   }
 
@@ -321,12 +339,12 @@ async function runChat(messages, emit) {
   for (let i = 0; i < 6; i++) {
     const stream = anthropic.beta.messages.stream({
       model: MODEL,
-      max_tokens: 4000,
+      max_tokens: opts.maxTokens || 4000,
       betas: ['server-side-fallback-2026-07-01'],
       fallbacks: 'default',
       output_config: { effort: 'medium' },
       system,
-      tools: [...TOOLS, ...SERVER_TOOLS],
+      tools: opts.tools || [...TOOLS, ...SERVER_TOOLS],
       messages
     });
     stream.on('text', (delta) => emit.delta(delta));
@@ -439,6 +457,39 @@ app.post('/api/chat/stream', async (req, res) => {
   } catch (error) {
     const status = errStatusOf(error);
     console.error('[chat/stream]', error);
+    send({ t: 'error', v: errMsgOf(status, error) });
+  }
+  res.write('data: [DONE]\n\n');
+  res.end();
+});
+
+/* ---------------- public website chat (SSE) ---------------- */
+app.post('/api/public-chat/stream', async (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache, no-transform');
+  res.setHeader('Connection', 'keep-alive');
+  if (res.flushHeaders) res.flushHeaders();
+  const send = (obj) => res.write('data: ' + JSON.stringify(obj) + '\n\n');
+  try {
+    const messages = prepIncoming(req.body && req.body.messages);
+    if (!messages.length || messages[0].role !== 'user') {
+      send({ t: 'error', v: 'messages must start with a user turn' });
+      return res.end();
+    }
+    const out = await runChat(messages, {
+      delta: (v) => send({ t: 'delta', v }),
+      status: (v) => send({ t: 'status', v })
+    }, {
+      persona: PERSONA_PUBLIC,
+      tools: TOOLS.filter((t) => t.name === 'create_quotation'),
+      includeLearned: false,
+      includeAnalytics: false,
+      maxTokens: 2000
+    });
+    send({ t: 'final', payload: { text: out.text, quotations: out.artifacts.quotations } });
+  } catch (error) {
+    const status = errStatusOf(error);
+    console.error('[public-chat]', error);
     send({ t: 'error', v: errMsgOf(status, error) });
   }
   res.write('data: [DONE]\n\n');
