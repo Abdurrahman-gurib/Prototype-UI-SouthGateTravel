@@ -4,7 +4,8 @@ import { useLang } from '../context/LangContext.jsx';
 import { PKGS, CAT_FOR_ROUTE, cw } from '../data/packages.js';
 import { money, boardLabel, tagFor } from '../utils/travel.js';
 import ImageSlot from '../components/ImageSlot.jsx';
-import PageHero from '../components/PageHero.jsx';
+import { THEME_FOR_ROUTE } from '../styles/themes.js';
+import { WaveDivider, ArabesqueBand, PalmCorner, CompassRose } from '../components/Motifs.jsx';
 import './PackageListing.css';
 
 const SORT_CHIPS = [
@@ -15,6 +16,14 @@ const SORT_CHIPS = [
 ];
 
 const BOARD_LABELS = { all: 'All boards', hb: 'Half board', bb: 'Bed and breakfast', fb: 'Full board', flightOnly: 'Flight only' };
+
+// Theme-accent tint for the price-rail CTA (deep end keeps white text readable).
+const BTN_GRADES = {
+  umrah: 'linear-gradient(135deg,#C9A14E 0%,#8A6420 62%)',
+  hol: 'linear-gradient(135deg,#C9A14E 0%,#8A6420 62%)',
+  rod: 'linear-gradient(135deg,#48C6A9 0%,#0F5E63 62%)',
+  cruise: 'linear-gradient(135deg,#17A5DA 0%,#0E6C93 62%)'
+};
 
 export default function PackageListing({ cat }) {
   const { lang, t } = useLang();
@@ -63,9 +72,68 @@ export default function PackageListing({ cat }) {
     setBd('all');
   };
 
+  const th = THEME_FOR_ROUTE[cat] || THEME_FOR_ROUTE.rodrigues;
+  const isGold = th.eyebrowClass === 'sg-gold-eyebrow';
+  const isWave = cat === 'rodrigues' || cat === 'cruises';
+
   return (
     <div>
-      <PageHero eyebrow={meta[0]} title={meta[1]} sub={meta[2]} />
+      <section className={'sgp-listing-hero ' + th.grade}>
+        <div className={th.pattern} aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }} />
+        {isWave && (
+          <div className="sg-hide-mobile" aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+            {cat === 'rodrigues' ? (
+              <PalmCorner color="rgba(255,255,255,.13)" size={180} style={{ top: -26, right: 44 }} />
+            ) : (
+              <CompassRose color="rgba(255,255,255,.15)" size={128} style={{ position: 'absolute', top: 32, right: 64 }} />
+            )}
+          </div>
+        )}
+        <div className="sg-container" style={{ position: 'relative', zIndex: 1, paddingTop: 52, paddingBottom: isWave ? 30 : 46 }}>
+          {meta[0] && (
+            <div
+              className={th.eyebrowClass}
+              style={
+                isGold
+                  ? { marginBottom: 14 }
+                  : {
+                      fontFamily: "'IBM Plex Mono',monospace",
+                      fontSize: 10.5,
+                      letterSpacing: '.13em',
+                      textTransform: 'uppercase',
+                      color: 'rgba(255,255,255,.85)',
+                      marginBottom: 14
+                    }
+              }
+            >
+              {meta[0]}
+            </div>
+          )}
+          <h1
+            style={{
+              fontFamily: "'Sora',sans-serif",
+              fontWeight: 800,
+              fontSize: 'clamp(30px, 5vw, 46px)',
+              letterSpacing: '-.034em',
+              color: '#fff',
+              margin: '0 0 14px',
+              lineHeight: 1.08
+            }}
+          >
+            {meta[1]}
+          </h1>
+          {meta[2] && (
+            <p style={{ fontSize: 17, lineHeight: 1.55, color: 'rgba(255,255,255,.78)', margin: 0, maxWidth: 620 }}>{meta[2]}</p>
+          )}
+          {isGold && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 26 }}>
+              <div className="sg-gold-rule" />
+              <ArabesqueBand color="rgba(201,161,78,.5)" count={5} size={13} />
+            </div>
+          )}
+        </div>
+        {isWave && <WaveDivider color="#f5f9fb" height={56} />}
+      </section>
 
       <div className="sg-container sgp-listing-toolbar" style={{ paddingTop: 28 }}>
         <div style={{ fontSize: 13.5, color: '#5B7280', fontWeight: 600 }}>{countLine}</div>
@@ -178,14 +246,20 @@ export default function PackageListing({ cat }) {
         {pool.map((p) => {
           const tg = tagFor(p, t, lang);
           return (
-            <button key={p.id} className="sgp-listing-card" onClick={() => navigate('/package/' + p.id)}>
-              <div className="sgp-listing-card-img">
+            <button
+              key={p.id}
+              className="sgp-listing-card"
+              onClick={() => navigate('/package/' + p.id)}
+              style={{ '--sgp-accent-soft': th.accentSoft }}
+            >
+              <div className="sgp-listing-card-img sg-photo-grade">
                 <ImageSlot src={cw(p.id, 0, 900)} alt={p.ph} style={{ position: 'absolute', inset: 0 }} />
                 <div
                   style={{
                     position: 'absolute',
                     top: 14,
                     left: 14,
+                    zIndex: 1,
                     background: tg.bg,
                     color: tg.fg,
                     fontSize: 10.5,
@@ -249,7 +323,17 @@ export default function PackageListing({ cat }) {
                     {money(p.price)}
                   </div>
                   <div style={{ fontSize: 11.5, color: '#8CA0AC', marginBottom: 14 }}>{t.perPerson}</div>
-                  <div style={{ background: '#E1262D', color: '#fff', fontSize: 13.5, fontWeight: 700, padding: 13, borderRadius: 12, textAlign: 'center' }}>
+                  <div
+                    style={{
+                      background: BTN_GRADES[th.key] || '#E1262D',
+                      color: '#fff',
+                      fontSize: 13.5,
+                      fontWeight: 700,
+                      padding: 13,
+                      borderRadius: 12,
+                      textAlign: 'center'
+                    }}
+                  >
                     {t.viewDates}
                   </div>
                 </div>

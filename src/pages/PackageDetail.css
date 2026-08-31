@@ -34,11 +34,42 @@
   grid-template-columns: 1fr 1fr;
 }
 
-/* Itinerary rows */
-.sgp-detail-itinrow {
+/* Day-by-day journey timeline */
+.sgp-detail-timeline {
+  position: relative;
+}
+.sgp-detail-timeline::before {
+  content: '';
+  position: absolute;
+  left: 17px;
+  top: 12px;
+  bottom: 16px;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(180deg, rgba(11, 36, 52, 0.16), rgba(11, 36, 52, 0.04));
+}
+.sgp-detail-tlrow {
+  position: relative;
   display: grid;
-  grid-template-columns: 96px 1fr;
-  gap: 22px;
+  grid-template-columns: 36px 1fr;
+  gap: 18px;
+  padding: 12px 0;
+}
+.sgp-detail-tldot {
+  position: relative;
+  z-index: 1;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: #fff;
+  border: 2px solid #17a5da; /* theme accent overrides inline */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #0b2434;
 }
 
 /* Big heading scales down on small screens, exact 40px on desktop */
@@ -98,8 +129,19 @@
   .sgp-detail-gk {
     grid-template-columns: 1fr;
   }
-  .sgp-detail-itinrow {
-    grid-template-columns: 1fr;
-    gap: 6px;
+  .sgp-detail-gkstrip {
+    padding: 20px 16px !important;
+  }
+  .sgp-detail-tlrow {
+    grid-template-columns: 32px 1fr;
+    gap: 14px;
+  }
+  .sgp-detail-tldot {
+    width: 32px;
+    height: 32px;
+    font-size: 11.5px;
+  }
+  .sgp-detail-timeline::before {
+    left: 15px;
   }
 }

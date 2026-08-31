@@ -217,6 +217,168 @@ img {
   box-shadow: 0 22px 48px rgba(11, 36, 52, 0.15);
 }
 
+/* ---------- Destination vibes: theme tokens & utilities ---------- */
+:root {
+  --sg-gold: #c9a14e;
+  --sg-gold-deep: #8a6420;
+  --sg-sand: #f6efe2;
+  --sg-sand-deep: #e8dcc4;
+  --sg-oasis: #0f5e63;
+  --sg-lagoon: #48c6a9;
+  --sg-nile: #0b4f6c;
+  --sg-dusk: #12455f;
+  --sg-coral: #f0656a;
+}
+
+/* Color-graded card/section gradients */
+.sg-grade-tropical {
+  background: linear-gradient(140deg, #0e7fab 0%, #17a5da 46%, #48c6a9 100%);
+}
+.sg-grade-lagoon {
+  background: linear-gradient(160deg, #eafaf6 0%, #d8f2f9 55%, #eef8fc 100%);
+}
+.sg-grade-desert {
+  background: linear-gradient(140deg, #7a4a1c 0%, #b07b2e 52%, #c9a14e 100%);
+}
+.sg-grade-sand {
+  background: linear-gradient(165deg, #f9f4e8 0%, #f2e8d2 60%, #f7f1e3 100%);
+}
+.sg-grade-nile {
+  background: linear-gradient(140deg, #083446 0%, #0b4f6c 55%, #12455f 100%);
+}
+.sg-grade-night {
+  background: linear-gradient(150deg, #081b28 0%, #0b2434 52%, #12455f 100%);
+}
+.sg-grade-sunset {
+  background: linear-gradient(140deg, #b01820 0%, #e1262d 45%, #f0656a 100%);
+}
+
+/* Subtle repeating patterns (SVG data URIs, tone-on-tone, decorative only).
+   The URIs live in variables so grade+pattern compound rules can LAYER them
+   over a gradient — a lone pattern class on a plain surface still works. */
+:root {
+  --sg-svg-arabesque: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.09' stroke-width='1'%3E%3Cpath d='M28 4l6 12 12 6-12 6-6 12-6-12-12-6 12-6z'/%3E%3Ccircle cx='28' cy='28' r='5'/%3E%3C/g%3E%3C/svg%3E");
+  --sg-svg-arabesque-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56'%3E%3Cg fill='none' stroke='%230B2434' stroke-opacity='0.06' stroke-width='1'%3E%3Cpath d='M28 4l6 12 12 6-12 6-6 12-6-12-12-6 12-6z'/%3E%3Ccircle cx='28' cy='28' r='5'/%3E%3C/g%3E%3C/svg%3E");
+  --sg-svg-waves: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='24' viewBox='0 0 80 24'%3E%3Cpath d='M0 12c10-8 20-8 30 0s20 8 30 0 15-6 20-2' fill='none' stroke='%23ffffff' stroke-opacity='0.10' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  --sg-svg-waves-ink: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='24' viewBox='0 0 80 24'%3E%3Cpath d='M0 12c10-8 20-8 30 0s20 8 30 0 15-6 20-2' fill='none' stroke='%2317A5DA' stroke-opacity='0.12' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  --sg-svg-flightgrid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='60' viewBox='0 0 120 60'%3E%3Cpath d='M0 50 Q 60 0 120 40' fill='none' stroke='%23ffffff' stroke-opacity='0.08' stroke-width='1.2' stroke-dasharray='2 6' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+.sg-pattern-arabesque {
+  background-image: var(--sg-svg-arabesque);
+}
+.sg-pattern-arabesque-dark {
+  background-image: var(--sg-svg-arabesque-dark);
+}
+.sg-pattern-waves {
+  background-image: var(--sg-svg-waves);
+}
+.sg-pattern-waves-ink {
+  background-image: var(--sg-svg-waves-ink);
+}
+.sg-pattern-flightgrid {
+  background-image: var(--sg-svg-flightgrid);
+}
+
+/* Grade + pattern on ONE element: layer the pattern over the gradient
+   (the pattern's background-image would otherwise replace the grade). */
+.sg-grade-night.sg-pattern-arabesque {
+  background-image: var(--sg-svg-arabesque), linear-gradient(150deg, #081b28 0%, #0b2434 52%, #12455f 100%);
+}
+.sg-grade-night.sg-pattern-flightgrid {
+  background-image: var(--sg-svg-flightgrid), linear-gradient(150deg, #081b28 0%, #0b2434 52%, #12455f 100%);
+}
+.sg-grade-night.sg-pattern-waves {
+  background-image: var(--sg-svg-waves), linear-gradient(150deg, #081b28 0%, #0b2434 52%, #12455f 100%);
+}
+.sg-grade-nile.sg-pattern-arabesque {
+  background-image: var(--sg-svg-arabesque), linear-gradient(140deg, #083446 0%, #0b4f6c 55%, #12455f 100%);
+}
+.sg-grade-nile.sg-pattern-flightgrid {
+  background-image: var(--sg-svg-flightgrid), linear-gradient(140deg, #083446 0%, #0b4f6c 55%, #12455f 100%);
+}
+.sg-grade-tropical.sg-pattern-waves {
+  background-image: var(--sg-svg-waves), linear-gradient(140deg, #0e7fab 0%, #17a5da 46%, #48c6a9 100%);
+}
+.sg-grade-sunset.sg-pattern-waves {
+  background-image: var(--sg-svg-waves), linear-gradient(140deg, #b01820 0%, #e1262d 45%, #f0656a 100%);
+}
+.sg-grade-sand.sg-pattern-arabesque-dark {
+  background-image: var(--sg-svg-arabesque-dark), linear-gradient(165deg, #f9f4e8 0%, #f2e8d2 60%, #f7f1e3 100%);
+}
+.sg-grade-desert.sg-pattern-arabesque-dark {
+  background-image: var(--sg-svg-arabesque-dark), linear-gradient(140deg, #7a4a1c 0%, #b07b2e 52%, #c9a14e 100%);
+}
+.sg-grade-lagoon.sg-pattern-waves-ink {
+  background-image: var(--sg-svg-waves-ink), linear-gradient(160deg, #eafaf6 0%, #d8f2f9 55%, #eef8fc 100%);
+}
+
+/* Gold accents (Arabian / premium touches) */
+.sg-gold-text {
+  color: var(--sg-gold);
+}
+.sg-gold-eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--sg-gold);
+}
+.sg-gold-rule {
+  height: 2px;
+  width: 56px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--sg-gold), rgba(201, 161, 78, 0.15));
+}
+.sg-gold-ring {
+  border: 1px solid rgba(201, 161, 78, 0.45) !important;
+  box-shadow: 0 0 0 4px rgba(201, 161, 78, 0.08);
+}
+
+/* Boarding-pass / ticket card (aviation vibe) */
+.sg-ticket {
+  position: relative;
+  background: #fff;
+  border: 1px solid rgba(11, 36, 52, 0.1);
+  border-radius: 18px;
+}
+.sg-ticket-divider {
+  position: relative;
+  border-top: 2px dashed rgba(11, 36, 52, 0.14);
+}
+.sg-ticket-divider::before,
+.sg-ticket-divider::after {
+  content: '';
+  position: absolute;
+  top: -11px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #f5f9fb;
+  border: 1px solid rgba(11, 36, 52, 0.1);
+}
+.sg-ticket-divider::before {
+  left: -32px;
+}
+.sg-ticket-divider::after {
+  right: -32px;
+}
+
+/* Soft image overlay grades for photo cards */
+.sg-photo-grade::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(11, 36, 52, 0) 38%, rgba(11, 36, 52, 0.72) 100%);
+}
+.sg-photo-warm::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(160deg, rgba(201, 161, 78, 0.16) 0%, rgba(11, 36, 52, 0.05) 45%, rgba(11, 36, 52, 0.72) 100%);
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,

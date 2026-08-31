@@ -4,7 +4,14 @@ import { useLang } from '../context/LangContext.jsx';
 import { cw, getPackage } from '../data/packages.js';
 import { money, boardLabel, tagFor, computeTotals } from '../utils/travel.js';
 import ImageSlot from '../components/ImageSlot.jsx';
+import { CompassRose } from '../components/Motifs.jsx';
+import { themeForCat } from '../styles/themes.js';
 import './PackageDetail.css';
+
+const mono = "'IBM Plex Mono',monospace";
+
+// Contrast-safe deepened tints of each theme accent, for small text on white.
+const DEEP_ACCENT = { rod: '#0F8D74', cruise: '#0E7FAB', fly: '#0E7FAB' };
 
 export default function PackageDetail() {
   const { id } = useParams();
@@ -20,6 +27,10 @@ export default function PackageDetail() {
     setSlot(0);
   }, [id]);
 
+  const th = themeForCat(p.cat);
+  const isGold = th.eyebrowClass === 'sg-gold-eyebrow';
+  const deepAccent = isGold ? 'var(--sg-gold-deep)' : DEEP_ACCENT[th.key] || th.accent;
+
   const tg = tagFor(p, t, lang);
   const meta = boardLabel(p, t);
   const priceFmt = money(p.price);
@@ -30,6 +41,10 @@ export default function PackageDetail() {
 
   const startBooking = () => navigate('/book/' + p.id + '?slot=' + sIdx);
   const goContact = () => navigate('/contact');
+
+  const railRing = p.cat === 'umrah'
+    ? {}
+    : { border: '1px solid rgba(11,36,52,.11)', boxShadow: '0 0 0 4px ' + th.accentSoft + ', 0 14px 38px rgba(11,36,52,.07)' };
 
   return (
     <div>
@@ -48,15 +63,15 @@ export default function PackageDetail() {
       {/* Photo gallery */}
       <div className="sgp-detail-container" style={{ maxWidth: 1280, margin: '0 auto', padding: '18px 32px 0' }}>
         <div className="sgp-detail-gallery" style={{ gap: 12 }}>
-          <div className="sgp-detail-gmain" style={{ borderRadius: 20, overflow: 'hidden' }}>
+          <div className="sgp-detail-gmain sg-photo-grade" style={{ borderRadius: 20, overflow: 'hidden', position: 'relative' }}>
             <ImageSlot src={cw(p.id, 0, 1600)} alt={p.ph} />
           </div>
-          <div style={{ borderRadius: 20, overflow: 'hidden' }}>
+          <div className="sg-photo-grade" style={{ borderRadius: 20, overflow: 'hidden', position: 'relative' }}>
             <ImageSlot src={cw(p.id, 1, 1400)} alt={p.phB} />
           </div>
-          <div style={{ borderRadius: 20, overflow: 'hidden', position: 'relative' }}>
+          <div className="sg-photo-grade" style={{ borderRadius: 20, overflow: 'hidden', position: 'relative' }}>
             <ImageSlot src={cw(p.id, 2, 1400)} alt={p.phC} />
-            <div style={{ position: 'absolute', right: 14, bottom: 14, background: 'rgba(11,36,52,.82)', color: '#fff', fontSize: '11.5px', fontWeight: 700, padding: '8px 13px', borderRadius: 999, pointerEvents: 'none' }}>
+            <div style={{ position: 'absolute', right: 14, bottom: 14, zIndex: 1, background: 'rgba(11,36,52,.82)', color: '#fff', fontSize: '11.5px', fontWeight: 700, padding: '8px 13px', borderRadius: 999, pointerEvents: 'none' }}>
               {t.morePhotos}
             </div>
           </div>
@@ -66,8 +81,17 @@ export default function PackageDetail() {
       {/* Main grid: content + booking rail */}
       <div className="sgp-detail-container sgp-detail-main" style={{ maxWidth: 1280, margin: '0 auto', padding: '34px 32px 0', alignItems: 'start' }}>
         <div>
-          <div style={{ display: 'inline-block', background: tg.bg, color: tg.fg, fontSize: '10.5px', fontWeight: 800, letterSpacing: '.05em', padding: '6px 11px', borderRadius: 999, marginBottom: 14 }}>
-            {tg.txt}
+          {/* Themed eyebrow above the name (gold for Umrah / Holidays) */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
+            <span aria-hidden="true" style={{ width: 30, height: 2, borderRadius: 2, background: isGold ? 'var(--sg-gold)' : th.accent, flex: 'none' }} />
+            <span
+              className={isGold ? 'sg-gold-eyebrow' : ''}
+              style={isGold
+                ? { fontWeight: 600, color: 'var(--sg-gold-deep)' } // deep gold: --sg-gold is too faint on the white page bg
+                : { fontFamily: mono, fontSize: '10.5px', letterSpacing: '.16em', textTransform: 'uppercase', color: deepAccent, fontWeight: 600 }}
+            >
+              {tg.txt}
+            </span>
           </div>
           <h1 className="sgp-detail-h1" style={{ fontFamily: "'Sora',sans-serif", fontWeight: 800, letterSpacing: '-.034em', margin: '0 0 10px', lineHeight: 1.1 }}>
             {p.name}
@@ -99,7 +123,7 @@ export default function PackageDetail() {
             </div>
             {p.exc && (
               <>
-                <div style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: '9.5px', letterSpacing: '.11em', textTransform: 'uppercase', color: '#8CA0AC', margin: '22px 0 12px' }}>
+                <div style={{ fontFamily: mono, fontSize: '9.5px', letterSpacing: '.11em', textTransform: 'uppercase', color: '#8CA0AC', margin: '22px 0 12px' }}>
                   {notIncluded}
                 </div>
                 <div className="sgp-detail-cols2" style={{ gap: '12px 26px' }}>
@@ -114,14 +138,16 @@ export default function PackageDetail() {
             )}
           </div>
 
-          {/* Day by day */}
-          <div style={{ borderTop: '1px solid rgba(11,36,52,.1)', paddingTop: 26, marginBottom: 30 }}>
-            <h2 style={{ fontFamily: "'Sora',sans-serif", fontWeight: 700, fontSize: 22, letterSpacing: '-.024em', margin: '0 0 18px' }}>{t.itinerary}</h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-              {(p.itin || []).map((d) => (
-                <div key={d[0] + d[1]} className="sgp-detail-itinrow" style={{ padding: '18px 0', borderBottom: '1px solid rgba(11,36,52,.07)' }}>
-                  <div style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: 11, letterSpacing: '.1em', textTransform: 'uppercase', color: '#E1262D', fontWeight: 600 }}>{d[0]}</div>
-                  <div>
+          {/* Day by day — vertical journey timeline */}
+          <div style={{ borderTop: '1px solid rgba(11,36,52,.1)', paddingTop: 26, marginBottom: 30, position: 'relative' }}>
+            <CompassRose color={th.accentSoft} size={96} style={{ position: 'absolute', top: 12, left: -16, pointerEvents: 'none' }} />
+            <h2 style={{ position: 'relative', fontFamily: "'Sora',sans-serif", fontWeight: 700, fontSize: 22, letterSpacing: '-.024em', margin: '0 0 20px' }}>{t.itinerary}</h2>
+            <div className="sgp-detail-timeline">
+              {(p.itin || []).map((d, di) => (
+                <div key={d[0] + d[1]} className="sgp-detail-tlrow">
+                  <div className="sgp-detail-tldot" style={{ borderColor: th.accent, boxShadow: '0 0 0 4px ' + th.accentSoft }}>{di + 1}</div>
+                  <div style={{ paddingBottom: 4 }}>
+                    <div style={{ fontFamily: mono, fontSize: 11, letterSpacing: '.1em', textTransform: 'uppercase', color: deepAccent, fontWeight: 600, marginBottom: 4 }}>{d[0]}</div>
                     <div style={{ fontSize: '15.5px', fontWeight: 700, marginBottom: 5 }}>{d[1]}</div>
                     <div style={{ fontSize: 14, lineHeight: 1.55, color: '#5B7280' }}>{d[2]}</div>
                   </div>
@@ -130,30 +156,33 @@ export default function PackageDetail() {
             </div>
           </div>
 
-          {/* Good to know */}
+          {/* Good to know — sand strip with arabesque whisper */}
           <div style={{ borderTop: '1px solid rgba(11,36,52,.1)', paddingTop: 26 }}>
-            <h2 style={{ fontFamily: "'Sora',sans-serif", fontWeight: 700, fontSize: 22, letterSpacing: '-.024em', margin: '0 0 16px' }}>{t.goodToKnow}</h2>
-            <div className="sgp-detail-gk" style={{ gap: 14 }}>
-              {[[t.gk1t, t.gk1b], [t.gk2t, t.gk2b], [t.gk3t, t.gk3b], [t.gk4t, t.gk4b]].map((g) => (
-                <div key={g[0]} style={{ background: '#F2F6F8', borderRadius: 16, padding: '20px 22px' }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 7 }}>{g[0]}</div>
-                  <div style={{ fontSize: '13.5px', lineHeight: 1.55, color: '#5B7280' }}>{g[1]}</div>
-                </div>
-              ))}
+            <div className="sg-grade-sand sg-pattern-arabesque-dark sgp-detail-gkstrip" style={{ borderRadius: 22, border: '1px solid rgba(201,161,78,.22)', padding: 26 }}>
+              <h2 style={{ fontFamily: "'Sora',sans-serif", fontWeight: 700, fontSize: 22, letterSpacing: '-.024em', margin: '0 0 12px' }}>{t.goodToKnow}</h2>
+              <div className="sg-gold-rule" style={{ marginBottom: 20 }} />
+              <div className="sgp-detail-gk" style={{ gap: 14 }}>
+                {[[t.gk1t, t.gk1b], [t.gk2t, t.gk2b], [t.gk3t, t.gk3b], [t.gk4t, t.gk4b]].map((g) => (
+                  <div key={g[0]} style={{ background: 'rgba(255,255,255,.85)', border: '1px solid rgba(11,36,52,.06)', borderRadius: 16, padding: '20px 22px' }}>
+                    <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 7 }}>{g[0]}</div>
+                    <div style={{ fontSize: '13.5px', lineHeight: 1.55, color: '#5B7280' }}>{g[1]}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
 
         {/* Sticky booking rail */}
         <div className="sgp-detail-rail">
-          <div style={{ background: '#fff', border: '1px solid rgba(11,36,52,.11)', borderRadius: 22, padding: '26px 26px 28px', boxShadow: '0 14px 38px rgba(11,36,52,.07)' }}>
+          <div className={p.cat === 'umrah' ? 'sg-gold-ring' : ''} style={{ background: '#fff', borderRadius: 22, padding: '26px 26px 28px', ...railRing }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 4 }}>
               <span style={{ fontSize: 13, color: '#8CA0AC' }}>{t.from}</span>
               <span style={{ fontFamily: "'Sora',sans-serif", fontWeight: 800, fontSize: 34, letterSpacing: '-.034em' }}>{priceFmt}</span>
             </div>
             <div style={{ fontSize: 13, color: '#8CA0AC', marginBottom: 22 }}>{t.perPerson}</div>
 
-            <div style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: '9.5px', letterSpacing: '.11em', textTransform: 'uppercase', color: '#8CA0AC', marginBottom: 9 }}>{t.selectDate}</div>
+            <div style={{ fontFamily: mono, fontSize: '9.5px', letterSpacing: '.11em', textTransform: 'uppercase', color: '#8CA0AC', marginBottom: 9 }}>{t.selectDate}</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
               {(p.slots || []).map((s, i) => (
                 <button
@@ -161,8 +190,8 @@ export default function PackageDetail() {
                   onClick={() => setSlot(i)}
                   style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                    border: '2px solid ' + (i === sIdx ? '#17A5DA' : 'rgba(11,36,52,.12)'),
-                    background: i === sIdx ? '#F2FAFE' : '#fff',
+                    border: '2px solid ' + (i === sIdx ? th.accent : 'rgba(11,36,52,.12)'),
+                    background: i === sIdx ? th.accentSoft : '#fff',
                     borderRadius: 13, padding: '13px 15px', cursor: 'pointer', textAlign: 'left', width: '100%'
                   }}
                 >
@@ -175,7 +204,7 @@ export default function PackageDetail() {
               ))}
             </div>
 
-            <div style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: '9.5px', letterSpacing: '.11em', textTransform: 'uppercase', color: '#8CA0AC', marginBottom: 9 }}>{t.trav}</div>
+            <div style={{ fontFamily: mono, fontSize: '9.5px', letterSpacing: '.11em', textTransform: 'uppercase', color: '#8CA0AC', marginBottom: 9 }}>{t.trav}</div>
             <div style={{ border: '1px solid rgba(11,36,52,.12)', borderRadius: 13, padding: '4px 15px', marginBottom: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', padding: '11px 0', borderBottom: '1px solid rgba(11,36,52,.07)' }}>
                 <div style={{ flex: 1 }}><div style={{ fontSize: 14, fontWeight: 600 }}>{t.adults}</div></div>

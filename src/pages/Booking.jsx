@@ -4,6 +4,7 @@ import { useLang } from '../context/LangContext.jsx';
 import { getPackage, cw } from '../data/packages.js';
 import { money, computeTotals, travellerWords, travLine } from '../utils/travel.js';
 import ImageSlot from '../components/ImageSlot.jsx';
+import { FlightPath } from '../components/Motifs.jsx';
 import './Booking.css';
 
 const cardBox = { background: '#fff', border: '1px solid rgba(11,36,52,.1)', borderRadius: 20, padding: '28px 30px 30px' };
@@ -64,6 +65,9 @@ export default function Booking() {
   const aW = adults === 1 ? w.aOne : w.aMany;
   const cW = kids === 1 ? w.cOne : w.cMany;
 
+  // Destination code for the boarding-pass flight path (first 3 letters of the place).
+  const destCode = (((pk.place || '').replace(/[^A-Za-z]/g, '').slice(0, 3)) || 'SGT').toUpperCase();
+
   const stp = (n) =>
     step >= n
       ? { bg: '#0B2434', fg: '#fff', tx: '#0B2434' }
@@ -82,20 +86,21 @@ export default function Booking() {
 
   return (
     <div className="sgp-book-wrap" style={{ maxWidth: 1080, margin: '0 auto', padding: '34px 32px 0' }}>
-      {/* Step indicator */}
+      {/* Step indicator — boarding-pass stubs joined by a dashed line */}
       <div className="sgp-book-steps" style={{ display: 'flex', alignItems: 'center', gap: 0, marginBottom: 34 }}>
         {[[1, t.step1], [2, t.step2], [3, t.step3]].map(([n, label], i) => {
           const q = stp(n);
+          const on = step >= n;
           return (
             <React.Fragment key={n}>
               {i > 0 && (
-                <div className="sgp-book-conn" style={{ flex: 1, height: 1, background: 'rgba(11,36,52,.14)', margin: '0 18px' }} />
+                <div className="sgp-book-conn" style={{ flex: 1, height: 0, borderTop: '2px dashed rgba(11,36,52,.18)', margin: '0 18px' }} />
               )}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 11 }}>
-                <div style={{ width: 30, height: 30, borderRadius: 99, background: q.bg, color: q.fg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800 }}>
-                  {n}
+              <div className="sgp-book-stub" style={{ display: 'flex', alignItems: 'stretch', background: q.bg, color: q.fg, borderRadius: 11, border: '1px solid ' + (on ? '#0B2434' : 'rgba(11,36,52,.1)'), overflow: 'hidden' }}>
+                <div className="sgp-book-stubnum" style={{ display: 'flex', alignItems: 'center', fontFamily: mono, fontSize: 12, fontWeight: 700, letterSpacing: '.06em', padding: '10px 11px', borderRight: '1.5px dashed ' + (on ? 'rgba(255,255,255,.3)' : 'rgba(11,36,52,.14)') }}>
+                  {'0' + n}
                 </div>
-                <div className="sgp-book-steplabel" style={{ fontSize: 14, fontWeight: 700, color: q.tx }}>{label}</div>
+                <div className="sgp-book-steplabel" style={{ display: 'flex', alignItems: 'center', fontSize: 13.5, fontWeight: 700, padding: '10px 14px 10px 12px' }}>{label}</div>
               </div>
             </React.Fragment>
           );
@@ -232,54 +237,72 @@ export default function Booking() {
           )}
 
           {step === 3 && (
-            <div className="sgp-book-card" style={{ ...cardBox, padding: '36px 34px 34px' }}>
-              <div style={{ width: 62, height: 62, borderRadius: 99, background: '#12805C', marginBottom: 22 }} />
-              <h2 className="sgp-book-confirmtitle" style={{ fontFamily: "'Sora',sans-serif", fontWeight: 800, fontSize: 30, letterSpacing: '-.03em', margin: '0 0 10px', lineHeight: 1.15 }}>
-                {t.confirmTitle}
-              </h2>
-              <p style={{ fontSize: 16, lineHeight: 1.6, color: '#5B7280', margin: '0 0 26px', maxWidth: 520 }}>{t.confirmSub}</p>
-              <div className="sgp-book-refrow" style={{ display: 'flex', gap: 34, padding: '22px 0', borderTop: '1px solid rgba(11,36,52,.09)', borderBottom: '1px solid rgba(11,36,52,.09)', marginBottom: 26 }}>
+            <div className="sg-ticket" style={{ overflow: 'visible' }}>
+              {/* Night header band: flight path + reference */}
+              <div className="sg-grade-night sg-pattern-flightgrid sgp-book-band" style={{ borderRadius: '17px 17px 0 0', padding: '26px 30px 22px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '18px 28px', flexWrap: 'wrap' }}>
+                <FlightPath stroke="rgba(255,255,255,.6)" labelColor="rgba(201,161,78,.95)" width={210} height={54} from="MRU" to={destCode} />
                 <div>
-                  <div style={refLabel}>{t.ref}</div>
-                  <div style={{ fontFamily: mono, fontSize: 17, fontWeight: 600 }}>SG-26-0481</div>
-                </div>
-                <div>
-                  <div style={refLabel}>{t.paidToday}</div>
-                  <div style={{ fontFamily: "'Sora',sans-serif", fontSize: 17, fontWeight: 800, color: '#12805C' }}>{money(payNow)}</div>
-                </div>
-                <div>
-                  <div style={refLabel}>{t.balance}</div>
-                  <div style={{ fontFamily: "'Sora',sans-serif", fontSize: 17, fontWeight: 800 }}>{later ? money(later) : 'Rs 0'}</div>
+                  <div style={{ fontFamily: mono, fontSize: 9.5, letterSpacing: '.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,.55)', marginBottom: 6 }}>{t.ref}</div>
+                  <div style={{ fontFamily: mono, fontSize: 'clamp(20px, 5vw, 27px)', fontWeight: 600, letterSpacing: '.06em', color: '#fff' }}>SG-26-0481</div>
                 </div>
               </div>
-              <div style={{ display: 'flex', gap: 12, background: '#E7F9EE', border: '1px solid rgba(18,128,92,.2)', borderRadius: 15, padding: '17px 19px', marginBottom: 26 }}>
-                <div style={{ width: 32, height: 32, borderRadius: 99, background: '#25D366', flex: 'none' }} />
-                <div style={{ fontSize: 14, lineHeight: 1.55, color: '#0B5F44' }}>{t.waSent}</div>
+              {/* Ticket perforation */}
+              <div style={{ padding: '18px 22px 0' }}>
+                <div className="sg-ticket-divider" />
               </div>
-              <h3 style={{ fontFamily: "'Sora',sans-serif", fontWeight: 700, fontSize: 18, letterSpacing: '-.02em', margin: '0 0 14px' }}>{t.whatNext}</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 28 }}>
-                {[['01', t.next1], ['02', t.next2], ['03', t.next3]].map(([n, txt]) => (
-                  <div key={n} style={{ display: 'flex', gap: 13 }}>
-                    <div style={{ fontFamily: mono, fontSize: 12, color: '#E1262D', fontWeight: 600, paddingTop: 1 }}>{n}</div>
-                    <div style={{ fontSize: 14.5, lineHeight: 1.55, color: '#3C5464' }}>{txt}</div>
+              <div className="sgp-book-confirmbody" style={{ padding: '24px 30px 32px' }}>
+                <div style={{ width: 62, height: 62, borderRadius: 99, background: '#12805C', marginBottom: 22, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 10px 26px rgba(18,128,92,.28)' }}>
+                  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M5 12.5l4.2 4.3L19 7" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+                <h2 className="sgp-book-confirmtitle" style={{ fontFamily: "'Sora',sans-serif", fontWeight: 800, fontSize: 30, letterSpacing: '-.03em', margin: '0 0 10px', lineHeight: 1.15 }}>
+                  {t.confirmTitle}
+                </h2>
+                <p style={{ fontSize: 16, lineHeight: 1.6, color: '#5B7280', margin: '0 0 26px', maxWidth: 520 }}>{t.confirmSub}</p>
+                <div className="sgp-book-refrow" style={{ display: 'flex', gap: 34, padding: '22px 0', borderTop: '1px solid rgba(11,36,52,.09)', borderBottom: '1px solid rgba(11,36,52,.09)', marginBottom: 26 }}>
+                  <div>
+                    <div style={refLabel}>{t.paidToday}</div>
+                    <div style={{ fontFamily: "'Sora',sans-serif", fontSize: 17, fontWeight: 800, color: '#12805C' }}>{money(payNow)}</div>
                   </div>
-                ))}
-              </div>
-              <div className="sgp-book-btnrow" style={{ display: 'flex', gap: 12 }}>
-                <button onClick={() => navigate('/bookings')} style={{ border: 0, cursor: 'pointer', background: '#0B2434', color: '#fff', fontWeight: 700, fontSize: 15, padding: '15px 28px', borderRadius: 13 }}>
-                  {t.viewBookings}
-                </button>
-                <button onClick={() => navigate('/')} style={{ border: '1px solid rgba(11,36,52,.16)', cursor: 'pointer', background: '#fff', color: '#0B2434', fontWeight: 700, fontSize: 15, padding: '15px 28px', borderRadius: 13 }}>
-                  {t.backHome}
-                </button>
+                  <div>
+                    <div style={refLabel}>{t.balance}</div>
+                    <div style={{ fontFamily: "'Sora',sans-serif", fontSize: 17, fontWeight: 800 }}>{later ? money(later) : 'Rs 0'}</div>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: 12, background: '#E7F9EE', border: '1px solid rgba(18,128,92,.2)', borderRadius: 15, padding: '17px 19px', marginBottom: 26 }}>
+                  <div style={{ width: 32, height: 32, borderRadius: 99, background: '#25D366', flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M5 12.5l4.2 4.3L19 7" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                  <div style={{ fontSize: 14, lineHeight: 1.55, color: '#0B5F44' }}>{t.waSent}</div>
+                </div>
+                <h3 style={{ fontFamily: "'Sora',sans-serif", fontWeight: 700, fontSize: 18, letterSpacing: '-.02em', margin: '0 0 14px' }}>{t.whatNext}</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 28 }}>
+                  {[['01', t.next1], ['02', t.next2], ['03', t.next3]].map(([n, txt]) => (
+                    <div key={n} style={{ display: 'flex', gap: 13 }}>
+                      <div style={{ fontFamily: mono, fontSize: 12, color: '#E1262D', fontWeight: 600, paddingTop: 1 }}>{n}</div>
+                      <div style={{ fontSize: 14.5, lineHeight: 1.55, color: '#3C5464' }}>{txt}</div>
+                    </div>
+                  ))}
+                </div>
+                <div className="sgp-book-btnrow" style={{ display: 'flex', gap: 12 }}>
+                  <button onClick={() => navigate('/bookings')} style={{ border: 0, cursor: 'pointer', background: '#0B2434', color: '#fff', fontWeight: 700, fontSize: 15, padding: '15px 28px', borderRadius: 13 }}>
+                    {t.viewBookings}
+                  </button>
+                  <button onClick={() => navigate('/')} style={{ border: '1px solid rgba(11,36,52,.16)', cursor: 'pointer', background: '#fff', color: '#0B2434', fontWeight: 700, fontSize: 15, padding: '15px 28px', borderRadius: 13 }}>
+                    {t.backHome}
+                  </button>
+                </div>
               </div>
             </div>
           )}
         </div>
 
-        {/* Order summary rail */}
-        <div className="sgp-book-rail" style={{ position: 'sticky', top: 104, background: '#fff', border: '1px solid rgba(11,36,52,.1)', borderRadius: 20, overflow: 'hidden' }}>
-          <div style={{ height: 150 }}>
+        {/* Order summary rail — boarding-pass ticket */}
+        <div className="sgp-book-rail sg-ticket" style={{ position: 'sticky', top: 104, overflow: 'visible' }}>
+          <div className="sg-photo-grade" style={{ height: 150, borderRadius: '17px 17px 0 0', overflow: 'hidden', position: 'relative' }}>
             <ImageSlot src={cw(pk.id, 0, 900)} alt={pk.ph} />
           </div>
           <div style={{ padding: '20px 22px 24px' }}>
@@ -303,7 +326,7 @@ export default function Booking() {
               <span style={{ color: '#5B7280' }}>{kids + ' × ' + cW}</span>
               <span style={{ fontWeight: 600 }}>{money(kids * kidUnit)}</span>
             </div>
-            <div style={{ height: 1, background: 'rgba(11,36,52,.09)', margin: '16px 0' }} />
+            <div className="sg-ticket-divider" style={{ margin: '18px 0 14px' }} />
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 12 }}>
               <span style={{ fontSize: 15, fontWeight: 700 }}>{t.total}</span>
               <span style={{ fontFamily: "'Sora',sans-serif", fontWeight: 800, fontSize: 24, letterSpacing: '-.03em' }}>{money(total)}</span>

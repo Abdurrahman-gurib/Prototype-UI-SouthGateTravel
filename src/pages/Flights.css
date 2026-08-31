@@ -1,14 +1,31 @@
 /* Flights page — layout-critical rules and responsive behaviour (prefix sgp-flights-). */
 
+.sgp-flights-hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.sgp-flights-hero-inner {
+  padding-top: 52px;
+  padding-bottom: 46px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.sgp-flights-hero-path {
+  flex: 0 0 auto;
+  padding-bottom: 8px;
+}
+
+/* Boarding-pass search card: .sg-ticket supplies surface, border and radius. */
 .sgp-flights-search {
-  background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 18px 44px rgba(11, 36, 52, 0.12);
-  border: 1px solid rgba(11, 36, 52, 0.07);
   padding: 16px;
   display: flex;
   align-items: center;
   gap: 8px;
+  box-shadow: 0 18px 44px rgba(11, 36, 52, 0.12);
 }
 
 .sgp-flights-field {
@@ -25,6 +42,20 @@
 .sgp-flights-field-trav {
   flex: 0.8;
   border-right: 0;
+}
+
+/* Vertical tear-off perforation before the Search button (notches skipped: card
+   straddles the dark hero, so punch-hole circles cannot match both grounds). */
+.sgp-flights-search .sgp-flights-search-cut {
+  align-self: stretch;
+  border-top: 0;
+  border-left: 2px dashed rgba(11, 36, 52, 0.14);
+  margin: -16px 6px;
+}
+
+.sgp-flights-search .sgp-flights-search-cut::before,
+.sgp-flights-search .sgp-flights-search-cut::after {
+  display: none;
 }
 
 .sgp-flights-btn {
@@ -44,15 +75,38 @@
   opacity: 0.9;
 }
 
+/* Boarding-pass flight row: .sg-ticket supplies surface, border and radius. */
 .sgp-flights-row {
   display: grid;
-  grid-template-columns: 118px 1fr 200px 190px;
+  grid-template-columns: 118px minmax(0, 1fr) 180px 2px 190px;
   gap: 24px;
   align-items: center;
-  border: 1px solid rgba(11, 36, 52, 0.09);
-  background: #fff;
-  border-radius: 18px;
   padding: 20px 24px;
+  box-shadow: 0 6px 18px rgba(11, 36, 52, 0.05);
+}
+
+/* Vertical perforation before the price/Select stub, with punch-hole notches
+   re-aimed at the card's top and bottom edges (page ground both sides). */
+.sgp-flights-row .sgp-flights-cut {
+  align-self: stretch;
+  border-top: 0;
+  border-left: 2px dashed rgba(11, 36, 52, 0.14);
+  margin: -20px 0;
+}
+
+.sgp-flights-row .sgp-flights-cut::before,
+.sgp-flights-row .sgp-flights-cut::after {
+  left: -11px;
+  right: auto;
+}
+
+.sgp-flights-row .sgp-flights-cut::before {
+  top: -10px;
+}
+
+.sgp-flights-row .sgp-flights-cut::after {
+  top: auto;
+  bottom: -10px;
 }
 
 .sgp-flights-price {
@@ -61,7 +115,7 @@
 
 @media (max-width: 1024px) {
   .sgp-flights-row {
-    grid-template-columns: 100px 1fr 160px 150px;
+    grid-template-columns: 100px minmax(0, 1fr) 150px 2px 150px;
     gap: 16px;
   }
 }
@@ -86,12 +140,21 @@
     flex: 1 1 50%;
   }
 
+  /* Perforation turns horizontal above the full-width Search button. */
+  .sgp-flights-search .sgp-flights-search-cut {
+    flex: 1 1 100%;
+    align-self: auto;
+    border-left: 0;
+    border-top: 2px dashed rgba(11, 36, 52, 0.14);
+    margin: 12px -16px 0;
+  }
+
   .sgp-flights-btn {
     flex: 1 1 100%;
     margin-top: 10px;
   }
 
-  /* Stack the flight row: airline + price on top, timeline, then notes. */
+  /* Stack the flight row: airline + price on top, timeline, perforation, notes. */
   .sgp-flights-row {
     grid-template-columns: minmax(0, 1fr) auto;
     gap: 16px;
@@ -113,9 +176,35 @@
     padding-top: 8px;
   }
 
-  .sgp-flights-note {
+  /* Perforation turns horizontal; notches move to the card's side edges. */
+  .sgp-flights-row .sgp-flights-cut {
     grid-column: 1 / -1;
     grid-row: 3;
+    align-self: auto;
+    border-left: 0;
+    border-top: 2px dashed rgba(11, 36, 52, 0.14);
+    margin: 2px -24px;
+  }
+
+  .sgp-flights-row .sgp-flights-cut::before,
+  .sgp-flights-row .sgp-flights-cut::after {
+    top: -11px;
+    bottom: auto;
+  }
+
+  .sgp-flights-row .sgp-flights-cut::before {
+    left: -10px;
+    right: auto;
+  }
+
+  .sgp-flights-row .sgp-flights-cut::after {
+    left: auto;
+    right: -10px;
+  }
+
+  .sgp-flights-note {
+    grid-column: 1 / -1;
+    grid-row: 4;
   }
 }
 

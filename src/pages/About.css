@@ -8,11 +8,25 @@
   margin-bottom: 56px;
 }
 
+/* Compass whisper floating behind the hero copy (desktop only) */
+.sgp-about-compass {
+  position: absolute;
+  top: -34px;
+  right: -6px;
+  pointer-events: none;
+}
+
 .sgp-about-stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
   margin-bottom: 56px;
+}
+
+/* Dune divider flows straight into the sand panel holding the offices */
+.sgp-about-sandpanel {
+  border-radius: 0 0 26px 26px;
+  padding: 10px 28px 40px;
 }
 
 .sgp-about-offices {
@@ -29,6 +43,9 @@
   .sgp-about-hero {
     grid-template-columns: 1fr;
     gap: 32px;
+  }
+  .sgp-about-compass {
+    display: none;
   }
   .sgp-about-img {
     height: 320px !important;
@@ -48,6 +65,10 @@
   .sgp-about-offices {
     grid-template-columns: 1fr;
   }
+  .sgp-about-sandpanel {
+    padding: 8px 20px 32px;
+    border-radius: 0 0 22px 22px;
+  }
 }
 
 @media (max-width: 560px) {
@@ -59,5 +80,9 @@
   }
   .sgp-about-stats {
     gap: 12px;
+  }
+  .sgp-about-sandpanel {
+    padding: 6px 14px 26px;
+    border-radius: 0 0 18px 18px;
   }
 }

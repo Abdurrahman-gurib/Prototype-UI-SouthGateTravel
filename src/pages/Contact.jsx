@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLang } from '../context/LangContext.jsx';
 import ImageSlot from '../components/ImageSlot.jsx';
+import { PalmCorner } from '../components/Motifs.jsx';
 import './Contact.css';
 
 // Demo-submit confirmation copy (no i18n keys exist for this — kept local per contracts).
@@ -75,163 +76,180 @@ export default function Contact() {
       </h1>
       <p style={{ fontSize: 17, lineHeight: 1.6, color: '#5B7280', margin: '0 0 36px', maxWidth: 600 }}>{t.contactSub}</p>
 
-      <div className="sgp-contact-grid">
-        {/* Form card */}
-        <div className="sgp-contact-card" style={{ background: '#fff', border: '1px solid rgba(11,36,52,.1)', borderRadius: 20 }}>
-          {submitted ? (
-            <div className="sgp-contact-sent" role="status">
-              <div
-                style={{
-                  width: 52,
-                  height: 52,
-                  borderRadius: '50%',
-                  background: 'rgba(11,107,55,.1)',
-                  color: '#0B6B37',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 24,
-                  fontWeight: 800,
-                  marginBottom: 16
-                }}
-              >
-                {'✓'}
-              </div>
-              <div style={{ fontFamily: "'Sora',sans-serif", fontWeight: 700, fontSize: 21, letterSpacing: '-.022em', marginBottom: 8 }}>
-                {sent.title}
-              </div>
-              <p style={{ fontSize: 14.5, lineHeight: 1.6, color: '#5B7280', margin: '0 0 6px', maxWidth: 400 }}>{sent.sub}</p>
-              <p style={{ fontSize: 12.5, color: '#8CA0AC', lineHeight: 1.5, margin: '0 0 20px' }}>{t.formNote}</p>
-              <button type="button" className="sgp-contact-again" onClick={reset}>
-                {sent.again}
-              </button>
-            </div>
-          ) : (
-            <form onSubmit={submit} noValidate>
-              <div className="sgp-contact-formgrid" style={{ marginBottom: 14 }}>
-                <div>
-                  <div style={LABEL_STYLE}>{t.yourName}</div>
-                  <input
-                    className="sgp-contact-input"
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Nazreen S."
-                    aria-label={t.yourName}
-                  />
+      {/* Warm sand strip behind the whole form area, arabesque whisper layered on top */}
+      <div className="sgp-contact-strip sg-grade-sand">
+        <div className="sg-pattern-arabesque-dark" aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }} />
+        <div className="sgp-contact-grid" style={{ position: 'relative', zIndex: 1 }}>
+          {/* Form card */}
+          <div className="sgp-contact-card" style={{ background: '#fff', border: '1px solid rgba(11,36,52,.1)', borderRadius: 20, boxShadow: '0 12px 32px rgba(11,36,52,.07)' }}>
+            {submitted ? (
+              <div className="sgp-contact-sent" role="status">
+                <div
+                  style={{
+                    width: 52,
+                    height: 52,
+                    borderRadius: '50%',
+                    background: 'rgba(11,107,55,.1)',
+                    color: '#0B6B37',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 24,
+                    fontWeight: 800,
+                    marginBottom: 16
+                  }}
+                >
+                  {'✓'}
                 </div>
-                <div>
-                  <div style={LABEL_STYLE}>{t.phone}</div>
-                  <input
-                    className="sgp-contact-input"
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+230 5xxx xxxx"
-                    aria-label={t.phone}
-                  />
+                <div style={{ fontFamily: "'Sora',sans-serif", fontWeight: 700, fontSize: 21, letterSpacing: '-.022em', marginBottom: 8 }}>
+                  {sent.title}
                 </div>
-              </div>
-              <div style={{ marginBottom: 14 }}>
-                <div style={LABEL_STYLE}>{t.interestedIn}</div>
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                  {interests.map(([val, lbl]) => (
-                    <button
-                      key={val}
-                      type="button"
-                      className="sgp-contact-chip"
-                      onClick={() => setInterest(val)}
-                      aria-pressed={interest === val}
-                      style={
-                        interest === val
-                          ? { background: '#0B2434', border: '1px solid #0B2434', color: '#fff' }
-                          : { background: 'transparent', border: '1px solid rgba(11,36,52,.14)', color: '#5B7280' }
-                      }
-                    >
-                      {lbl}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div style={{ marginBottom: 18 }}>
-                <div style={LABEL_STYLE}>{t.message}</div>
-                <textarea
-                  className="sgp-contact-input"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  placeholder={t.messagePh}
-                  aria-label={t.message}
-                  style={{ minHeight: 110, resize: 'vertical' }}
-                />
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
-                <button type="submit" className="sgp-contact-send">
-                  {t.send}
+                <p style={{ fontSize: 14.5, lineHeight: 1.6, color: '#5B7280', margin: '0 0 6px', maxWidth: 400 }}>{sent.sub}</p>
+                <p style={{ fontSize: 12.5, color: '#8CA0AC', lineHeight: 1.5, margin: '0 0 20px' }}>{t.formNote}</p>
+                <button type="button" className="sgp-contact-again" onClick={reset}>
+                  {sent.again}
                 </button>
-                <div style={{ fontSize: 12.5, color: '#8CA0AC', lineHeight: 1.5, maxWidth: 230 }}>{t.formNote}</div>
               </div>
-            </form>
-          )}
-        </div>
-
-        {/* Right column */}
-        <div>
-          <div style={{ background: '#0B2434', borderRadius: 20, padding: '26px 26px 28px', marginBottom: 16 }}>
-            <div
-              style={{
-                fontFamily: "'Sora',sans-serif",
-                fontWeight: 700,
-                fontSize: 19,
-                color: '#fff',
-                letterSpacing: '-.022em',
-                marginBottom: 8
-              }}
-            >
-              {t.fastest}
-            </div>
-            <p style={{ fontSize: 14, lineHeight: 1.6, color: 'rgba(255,255,255,.62)', margin: '0 0 20px' }}>{t.fastestSub}</p>
-            <a
-              className="sgp-contact-wa"
-              href="https://wa.me/23059788007"
-              target="_blank"
-              rel="noreferrer"
-              style={{
-                display: 'block',
-                background: '#25D366',
-                color: '#08202E',
-                fontSize: 14.5,
-                fontWeight: 800,
-                padding: 15,
-                borderRadius: 12,
-                textAlign: 'center',
-                textDecoration: 'none'
-              }}
-            >
-              {t.waBtn}
-            </a>
+            ) : (
+              <form onSubmit={submit} noValidate>
+                <div className="sgp-contact-formgrid" style={{ marginBottom: 14 }}>
+                  <div>
+                    <div style={LABEL_STYLE}>{t.yourName}</div>
+                    <input
+                      className="sgp-contact-input"
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Nazreen S."
+                      aria-label={t.yourName}
+                    />
+                  </div>
+                  <div>
+                    <div style={LABEL_STYLE}>{t.phone}</div>
+                    <input
+                      className="sgp-contact-input"
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="+230 5xxx xxxx"
+                      aria-label={t.phone}
+                    />
+                  </div>
+                </div>
+                <div style={{ marginBottom: 14 }}>
+                  <div style={LABEL_STYLE}>{t.interestedIn}</div>
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    {interests.map(([val, lbl]) => (
+                      <button
+                        key={val}
+                        type="button"
+                        className="sgp-contact-chip"
+                        onClick={() => setInterest(val)}
+                        aria-pressed={interest === val}
+                        style={
+                          interest === val
+                            ? { background: '#0B2434', border: '1px solid #0B2434', color: '#fff' }
+                            : { background: 'transparent', border: '1px solid rgba(11,36,52,.14)', color: '#5B7280' }
+                        }
+                      >
+                        {lbl}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ marginBottom: 18 }}>
+                  <div style={LABEL_STYLE}>{t.message}</div>
+                  <textarea
+                    className="sgp-contact-input"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder={t.messagePh}
+                    aria-label={t.message}
+                    style={{ minHeight: 110, resize: 'vertical' }}
+                  />
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+                  <button type="submit" className="sgp-contact-send">
+                    {t.send}
+                  </button>
+                  <div style={{ fontSize: 12.5, color: '#8CA0AC', lineHeight: 1.5, maxWidth: 230 }}>{t.formNote}</div>
+                </div>
+              </form>
+            )}
           </div>
 
-          <div style={{ border: '1px solid rgba(11,36,52,.1)', background: '#fff', borderRadius: 20, padding: '22px 24px', marginBottom: 16 }}>
-            <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 3 }}>Valentina Mall</div>
-            <div style={{ fontSize: 13.5, color: '#5B7280', lineHeight: 1.6 }}>
-              696 2192
-              <br />
-              {t.monSat} 09:00 to 18:00
+          {/* Right column */}
+          <div>
+            <div className="sg-grade-tropical" style={{ position: 'relative', overflow: 'hidden', borderRadius: 20, padding: '26px 26px 28px', marginBottom: 16 }}>
+              <div
+                aria-hidden="true"
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  pointerEvents: 'none',
+                  background: 'linear-gradient(150deg, rgba(8,32,46,.42) 0%, rgba(8,32,46,.14) 55%, rgba(8,32,46,.32) 100%)'
+                }}
+              />
+              <div className="sg-pattern-waves" aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }} />
+              <PalmCorner color="rgba(255,255,255,.18)" size={112} style={{ top: -16, right: -14, transform: 'rotate(10deg)' }} />
+              <div style={{ position: 'relative', zIndex: 1 }}>
+                <div
+                  style={{
+                    fontFamily: "'Sora',sans-serif",
+                    fontWeight: 700,
+                    fontSize: 19,
+                    color: '#fff',
+                    letterSpacing: '-.022em',
+                    marginBottom: 8
+                  }}
+                >
+                  {t.fastest}
+                </div>
+                <p style={{ fontSize: 14, lineHeight: 1.6, color: 'rgba(255,255,255,.85)', margin: '0 0 20px' }}>{t.fastestSub}</p>
+                <a
+                  className="sgp-contact-wa"
+                  href="https://wa.me/23059788007"
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{
+                    display: 'block',
+                    background: '#25D366',
+                    color: '#08202E',
+                    fontSize: 14.5,
+                    fontWeight: 800,
+                    padding: 15,
+                    borderRadius: 12,
+                    textAlign: 'center',
+                    textDecoration: 'none'
+                  }}
+                >
+                  {t.waBtn}
+                </a>
+              </div>
             </div>
-            <div style={{ height: 1, background: 'rgba(11,36,52,.08)', margin: '16px 0' }} />
-            <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 3 }}>Rose-Belle</div>
-            <div style={{ fontSize: 13.5, color: '#5B7280', lineHeight: 1.6 }}>
-              660 9814
-              <br />
-              {t.monSat} 09:00 to 17:00
-            </div>
-          </div>
 
-          <div style={{ height: 190, borderRadius: 20, overflow: 'hidden' }}>
-            <ImageSlot
-              src="https://commons.wikimedia.org/wiki/Special:FilePath/Mauritius_-_Silent_Seascape2.jpg?width=800"
-              alt="Map of both branches"
-            />
+            <div style={{ border: '1px solid rgba(11,36,52,.1)', background: '#fff', borderRadius: 20, padding: '22px 24px', marginBottom: 16 }}>
+              <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 3 }}>Valentina Mall</div>
+              <div style={{ fontSize: 13.5, color: '#5B7280', lineHeight: 1.6 }}>
+                696 2192
+                <br />
+                {t.monSat} 09:00 to 18:00
+              </div>
+              <div style={{ height: 1, background: 'rgba(11,36,52,.08)', margin: '16px 0' }} />
+              <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 3 }}>Rose-Belle</div>
+              <div style={{ fontSize: 13.5, color: '#5B7280', lineHeight: 1.6 }}>
+                660 9814
+                <br />
+                {t.monSat} 09:00 to 17:00
+              </div>
+            </div>
+
+            <div className="sg-photo-grade" style={{ height: 190, borderRadius: 20, overflow: 'hidden', position: 'relative' }}>
+              <ImageSlot
+                src="https://commons.wikimedia.org/wiki/Special:FilePath/Mauritius_-_Silent_Seascape2.jpg?width=800"
+                alt="Map of both branches"
+              />
+            </div>
           </div>
         </div>
       </div>

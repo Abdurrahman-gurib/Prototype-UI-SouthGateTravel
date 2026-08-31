@@ -18,19 +18,22 @@ const btnBase = {
 };
 
 const railStyle = {
-  borderLeft: '1px solid rgba(11,36,52,.08)',
   padding: '22px 24px',
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'space-between',
-  background: '#FCFCFA'
+  justifyContent: 'space-between'
 };
 
-const cardStyle = {
-  border: '1px solid rgba(11,36,52,.1)',
-  background: '#fff',
-  borderRadius: 20,
-  overflow: 'hidden'
+/* Booking ref styled like an airline PNR */
+const pnrStyle = {
+  fontFamily: mono,
+  fontSize: 11,
+  letterSpacing: '.08em',
+  color: '#5B7280',
+  border: '1px dashed rgba(11,36,52,.22)',
+  borderRadius: 6,
+  padding: '3px 8px',
+  whiteSpace: 'nowrap'
 };
 
 export default function MyBookings() {
@@ -43,17 +46,17 @@ export default function MyBookings() {
       <p style={{ fontSize: 15.5, color: '#5B7280', margin: '0 0 30px' }}>{t.mybSub}</p>
 
       <div style={{ fontFamily: mono, fontSize: 10.5, letterSpacing: '.12em', textTransform: 'uppercase', color: '#8CA0AC', marginBottom: 14 }}>{t.upcoming}</div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 34 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 18, marginBottom: 34 }}>
 
         {/* Cotton Bay — confirmed, balance due */}
-        <div className="sgp-myb-card" style={cardStyle}>
+        <div className="sgp-myb-card sg-ticket">
           <div className="sgp-myb-img">
             <ImageSlot src="https://commons.wikimedia.org/wiki/Special:FilePath/Rodrigues_CalcareniticShore.jpg?width=600" alt="Rodrigues" />
           </div>
           <div style={{ padding: '22px 24px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 9 }}>
               <span style={{ background: '#E7F5F0', color: '#0B5F44', fontSize: 10.5, fontWeight: 800, padding: '5px 10px', borderRadius: 999 }}>{t.confirmed}</span>
-              <span style={{ fontFamily: mono, fontSize: 11.5, color: '#8CA0AC' }}>SG-26-0481</span>
+              <span style={pnrStyle}>SG-26-0481</span>
             </div>
             <div style={{ fontFamily: sora, fontWeight: 700, fontSize: 20, letterSpacing: '-.022em' }}>Cotton Bay Resort and Spa</div>
             <div style={{ fontSize: 13.5, color: '#5B7280', marginTop: 6 }}>Rodrigues <span style={{ opacity: .4 }}>&middot;</span> 19 to 22 May 2026 <span style={{ opacity: .4 }}>&middot;</span> 2 adults, 1 child</div>
@@ -66,6 +69,7 @@ export default function MyBookings() {
               </div>
             </div>
           </div>
+          <div className="sg-ticket-divider sgp-myb-tickdiv" aria-hidden="true" />
           <div className="sgp-myb-rail" style={railStyle}>
             <div>
               <div style={{ fontSize: 12, color: '#8CA0AC' }}>{t.balanceDue} 19 Apr 2026</div>
@@ -79,14 +83,14 @@ export default function MyBookings() {
         </div>
 
         {/* Umrah — instalment plan */}
-        <div className="sgp-myb-card" style={cardStyle}>
+        <div className="sgp-myb-card sg-ticket">
           <div className="sgp-myb-img">
             <ImageSlot src="https://commons.wikimedia.org/wiki/Special:FilePath/Kaaba_mirror_edit_jj.jpg?width=600" alt="Umrah" />
           </div>
           <div style={{ padding: '22px 24px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 9 }}>
               <span style={{ background: '#E8F6FC', color: '#0E7FAB', fontSize: 10.5, fontWeight: 800, padding: '5px 10px', borderRadius: 999 }}>{t.onPlan}</span>
-              <span style={{ fontFamily: mono, fontSize: 11.5, color: '#8CA0AC' }}>SG-26-0479</span>
+              <span style={pnrStyle}>SG-26-0479</span>
             </div>
             <div style={{ fontFamily: sora, fontWeight: 700, fontSize: 20, letterSpacing: '-.022em' }}>Umrah Ramadan 2027</div>
             <div style={{ fontSize: 13.5, color: '#5B7280', marginTop: 6 }}>Makkah and Madinah <span style={{ opacity: .4 }}>&middot;</span> 12 to 26 Feb 2027 <span style={{ opacity: .4 }}>&middot;</span> 1 adult</div>
@@ -99,6 +103,7 @@ export default function MyBookings() {
               </div>
             </div>
           </div>
+          <div className="sg-ticket-divider sgp-myb-tickdiv" aria-hidden="true" />
           <div className="sgp-myb-rail" style={railStyle}>
             <div>
               <div style={{ fontSize: 12, color: '#8CA0AC' }}>{t.nextPayment} 12 Oct 2026</div>
@@ -118,7 +123,8 @@ export default function MyBookings() {
           <div style={{ fontSize: 16, fontWeight: 700 }}>Dubai City Break</div>
           <div style={{ fontSize: 13, color: '#5B7280', marginTop: 4 }}>14 to 19 December 2025 <span style={{ opacity: .4 }}>&middot;</span> 2 adults</div>
         </div>
-        <div style={{ fontSize: 13, color: '#8CA0AC' }}>SG-25-0312</div>
+        <span className="sgp-myb-stamp" aria-hidden="true">Completed</span>
+        <div style={{ fontFamily: mono, fontSize: 12, letterSpacing: '.06em', color: '#8CA0AC' }}>SG-25-0312</div>
         <button type="button" className="sgp-myb-btn" onClick={() => navigate('/package/dubai')} style={{ fontFamily: 'inherit', border: '1px solid rgba(11,36,52,.14)', background: 'transparent', color: '#0B2434', fontSize: 12.5, fontWeight: 700, padding: '10px 18px', borderRadius: 999, cursor: 'pointer', whiteSpace: 'nowrap' }}>{t.bookAgain}</button>
       </div>
     </div>
