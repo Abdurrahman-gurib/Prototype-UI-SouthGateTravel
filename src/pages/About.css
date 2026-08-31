@@ -1,0 +1,63 @@
+/* About — layout-critical grids + responsive behaviour (sgp-about-*) */
+
+.sgp-about-hero {
+  display: grid;
+  grid-template-columns: 1.05fr .95fr;
+  gap: 56px;
+  align-items: center;
+  margin-bottom: 56px;
+}
+
+.sgp-about-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 56px;
+}
+
+.sgp-about-offices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.sgp-about-btn:hover {
+  filter: brightness(1.06);
+}
+
+@media (max-width: 1024px) {
+  .sgp-about-hero {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .sgp-about-img {
+    height: 320px !important;
+  }
+  .sgp-about-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .sgp-about-title {
+    font-size: clamp(30px, 7vw, 40px) !important;
+  }
+  .sgp-about-h2 {
+    font-size: clamp(24px, 6vw, 32px) !important;
+  }
+  .sgp-about-offices {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .sgp-about-wrap {
+    padding: 40px 18px 0 !important;
+  }
+  .sgp-about-img {
+    height: 220px !important;
+  }
+  .sgp-about-stats {
+    gap: 12px;
+  }
+}

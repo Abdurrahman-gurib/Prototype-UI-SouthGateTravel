@@ -1,0 +1,109 @@
+/* Package listing page — layout-critical rules and responsive behaviour (prefix sgp-listing-). */
+
+.sgp-listing-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sgp-listing-sorts {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.sgp-listing-card {
+  display: grid;
+  grid-template-columns: minmax(0, 280px) minmax(0, 1fr) minmax(0, 230px);
+  gap: 0;
+  border: 1px solid rgba(255, 255, 255, 0.88);
+  background: rgba(255, 255, 255, 0.82);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 26px rgba(11, 36, 52, 0.07);
+  border-radius: 22px;
+  overflow: hidden;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  color: inherit;
+  transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.25, 1), box-shadow 0.45s;
+}
+
+.sgp-listing-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 48px rgba(11, 36, 52, 0.15);
+}
+
+.sgp-listing-card-img {
+  position: relative;
+  min-height: 212px;
+}
+
+.sgp-listing-body {
+  padding: 24px 26px;
+}
+
+.sgp-listing-rail {
+  border-left: 1px solid rgba(11, 36, 52, 0.08);
+  padding: 24px 26px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: #fcfcfa;
+}
+
+.sgp-listing-clear:hover {
+  opacity: 0.88;
+}
+
+@media (max-width: 1024px) {
+  .sgp-listing-card {
+    grid-template-columns: minmax(0, 230px) minmax(0, 1fr) minmax(0, 210px);
+  }
+
+  .sgp-listing-body {
+    padding: 22px;
+  }
+
+  .sgp-listing-rail {
+    padding: 22px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sgp-listing-toolbar {
+    flex-wrap: wrap;
+    row-gap: 12px;
+  }
+
+  .sgp-listing-sorts {
+    justify-content: flex-start;
+  }
+
+  .sgp-listing-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sgp-listing-card-img {
+    min-height: 200px;
+  }
+
+  .sgp-listing-rail {
+    border-left: 0;
+    border-top: 1px solid rgba(11, 36, 52, 0.08);
+    gap: 18px;
+  }
+}
+
+@media (max-width: 560px) {
+  .sgp-listing-body {
+    padding: 20px 18px;
+  }
+
+  .sgp-listing-rail {
+    padding: 20px 18px;
+  }
+}

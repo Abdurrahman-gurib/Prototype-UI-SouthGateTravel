@@ -1,0 +1,30 @@
+.sg-footer-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+  gap: 44px;
+}
+
+.sg-footer-bottom {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+@media (max-width: 1023px) {
+  .sg-footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
+  }
+}
+
+@media (max-width: 640px) {
+  .sg-footer-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .sg-footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

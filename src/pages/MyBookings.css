@@ -1,0 +1,52 @@
+/* My bookings — layout-critical grids + responsive behaviour (sgp-myb-*) */
+
+.sgp-myb-card {
+  display: grid;
+  grid-template-columns: 190px 1fr 250px;
+}
+
+.sgp-myb-img {
+  height: 100%;
+  min-height: 100%;
+}
+
+.sgp-myb-btn:hover {
+  filter: brightness(1.05);
+}
+
+@media (max-width: 1024px) {
+  .sgp-myb-card {
+    grid-template-columns: 150px 1fr 225px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sgp-myb-title {
+    font-size: clamp(28px, 7.5vw, 38px) !important;
+  }
+  .sgp-myb-card {
+    grid-template-columns: 1fr;
+  }
+  .sgp-myb-img {
+    height: 180px;
+    min-height: 0;
+  }
+  .sgp-myb-rail {
+    border-left: none !important;
+    border-top: 1px solid rgba(11, 36, 52, .08);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 560px) {
+  .sgp-myb-wrap {
+    padding: 36px 18px 0 !important;
+  }
+  .sgp-myb-img {
+    height: 160px;
+  }
+  .sgp-myb-past {
+    flex-wrap: wrap;
+    row-gap: 12px;
+  }
+}

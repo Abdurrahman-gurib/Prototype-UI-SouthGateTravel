@@ -1,0 +1,130 @@
+/* Flights page — layout-critical rules and responsive behaviour (prefix sgp-flights-). */
+
+.sgp-flights-search {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 18px 44px rgba(11, 36, 52, 0.12);
+  border: 1px solid rgba(11, 36, 52, 0.07);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sgp-flights-field {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 18px;
+  border-right: 1px solid rgba(11, 36, 52, 0.09);
+}
+
+.sgp-flights-field-first {
+  padding: 6px 18px 6px 12px;
+}
+
+.sgp-flights-field-trav {
+  flex: 0.8;
+  border-right: 0;
+}
+
+.sgp-flights-btn {
+  border: 0;
+  cursor: pointer;
+  background: #17a5da;
+  color: #fff;
+  font-weight: 800;
+  font-size: 15px;
+  padding: 18px 34px;
+  border-radius: 14px;
+  white-space: nowrap;
+  transition: opacity 0.3s;
+}
+
+.sgp-flights-btn:hover {
+  opacity: 0.9;
+}
+
+.sgp-flights-row {
+  display: grid;
+  grid-template-columns: 118px 1fr 200px 190px;
+  gap: 24px;
+  align-items: center;
+  border: 1px solid rgba(11, 36, 52, 0.09);
+  background: #fff;
+  border-radius: 18px;
+  padding: 20px 24px;
+}
+
+.sgp-flights-price {
+  text-align: right;
+}
+
+@media (max-width: 1024px) {
+  .sgp-flights-row {
+    grid-template-columns: 100px 1fr 160px 150px;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sgp-flights-search {
+    flex-wrap: wrap;
+    gap: 0;
+  }
+
+  .sgp-flights-field {
+    flex: 1 1 50%;
+    border-right: 0;
+    padding: 10px 12px;
+  }
+
+  .sgp-flights-field-first {
+    padding: 10px 12px;
+  }
+
+  .sgp-flights-field-trav {
+    flex: 1 1 50%;
+  }
+
+  .sgp-flights-btn {
+    flex: 1 1 100%;
+    margin-top: 10px;
+  }
+
+  /* Stack the flight row: airline + price on top, timeline, then notes. */
+  .sgp-flights-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 16px;
+  }
+
+  .sgp-flights-airline {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .sgp-flights-price {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .sgp-flights-times {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    padding-top: 8px;
+  }
+
+  .sgp-flights-note {
+    grid-column: 1 / -1;
+    grid-row: 3;
+  }
+}
+
+@media (max-width: 560px) {
+  .sgp-flights-field {
+    flex: 1 1 100%;
+  }
+
+  .sgp-flights-field-trav {
+    flex: 1 1 100%;
+  }
+}

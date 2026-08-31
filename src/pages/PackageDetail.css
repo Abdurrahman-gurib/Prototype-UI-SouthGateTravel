@@ -1,0 +1,105 @@
+/* PackageDetail — layout-critical grids + responsive behaviour (desktop matches the mockup). */
+
+/* Photo gallery: 2fr 1fr, two 150px rows, main photo spans both rows */
+.sgp-detail-gallery {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: 150px 150px;
+  height: 312px;
+}
+.sgp-detail-gmain {
+  grid-row: span 2;
+}
+
+/* Content + rail */
+.sgp-detail-main {
+  display: grid;
+  grid-template-columns: 1fr 390px;
+  gap: 44px;
+}
+.sgp-detail-rail {
+  position: sticky;
+  top: 104px;
+}
+
+/* Two-column checklists (included / not included) */
+.sgp-detail-cols2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+/* Good to know cards */
+.sgp-detail-gk {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+/* Itinerary rows */
+.sgp-detail-itinrow {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 22px;
+}
+
+/* Big heading scales down on small screens, exact 40px on desktop */
+.sgp-detail-h1 {
+  font-size: clamp(28px, 5.2vw, 40px);
+}
+
+/* Hover states from the mockup's style-hover attributes */
+.sgp-detail-book:hover {
+  background: #b71c22 !important;
+}
+.sgp-detail-askwa:hover {
+  border-color: #25d366 !important;
+  color: #0b6b37 !important;
+}
+.sgp-detail-bookbar:hover {
+  transform: translateY(-2px);
+}
+
+@media (max-width: 1024px) {
+  .sgp-detail-main {
+    grid-template-columns: 1fr 340px;
+    gap: 28px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sgp-detail-main {
+    grid-template-columns: 1fr;
+    gap: 34px;
+  }
+  .sgp-detail-rail {
+    position: static;
+  }
+  .sgp-detail-gallery {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 190px 120px;
+    height: auto;
+  }
+  .sgp-detail-gmain {
+    grid-row: auto;
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 560px) {
+  .sgp-detail-container {
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+  }
+  .sgp-detail-gallery {
+    grid-template-rows: 170px 100px;
+  }
+  .sgp-detail-cols2 {
+    grid-template-columns: 1fr;
+  }
+  .sgp-detail-gk {
+    grid-template-columns: 1fr;
+  }
+  .sgp-detail-itinrow {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}
